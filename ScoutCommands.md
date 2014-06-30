@@ -1407,31 +1407,39 @@ None
 ## key
 
 #### Description
-`key(\"string\" | value)`
+`key(\"string\" | value[, temporary_flag])`
 
 Create a string in memory and return an index to the key location.  A quoted string 
-is saved as-is and an unsigned integer value is converted to a string and saved.  The string 
-can retrieved by referencing the index.  See key.print.
+is saved as-is and an integer value is converted to a string and saved.  The string 
+can retrieved by referencing the index.  Key lengths are limited to 10 chars.  Anything
+over 10 chars will return 0 (OVERFLOW).
 
-Note that values other than unsigned integers are accepted but will be treated as unsigned ints,
-leading to odd and unpredictable results.
 
 ```bash
 > print key(temperature.f)
+54
 > print key("My key")
+55
+> hq.report("example", key("temp", 1))
+{"type":"custom","name":"example","custom":["temp"]}
+> a = key("temperature")
+> key.print(a)
+OVERFLOW
+> print a
+0
+
 ```
 
 #### Parameters
 
- - *value* - A string or unsigned integer value to be saved as a string.
+ - *value* - A string or integer value to be saved as a string.
+ - *temporary_flag* - a non-zero value indicates a temporary key, which is 
+freed as soon as the command is executed.  This prevents unfreeable keys when
+creating a key inside another function call.
 
 #### Return Values
 The index of the created key entry
 
-```js
-> 54
-> 55
-```
 ## key.free
 
 #### Description
